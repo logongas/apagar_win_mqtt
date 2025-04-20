@@ -1,6 +1,8 @@
 import paho.mqtt.client as mqtt
 import argparse
 import time
+import ctypes
+import os
 
 # Configuración fija del broker y topic
 MQTT_BROKER = "192.168.50.141"
@@ -17,9 +19,19 @@ args = parser.parse_args()
 ultimo_estado = None
 mensaje_inicial_recibido = False
 
+
+
+
+def show_alert(message):
+    ctypes.windll.user32.MessageBoxW(0, message, "Alerta", 0x40 | 0x1)
+
 def manejar_cambio_estado(nuevo_estado):
     print(f"Estado cambiado a: {nuevo_estado}")
-    # Aquí haces lo que necesites
+
+    if (nuevo_estado=="on"):
+        show_alert("El sistema se apagará en 2 minutos. Guarda tu trabajo.")
+        time.sleep(120)
+        os.system("shutdown /s /t 0")        
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:

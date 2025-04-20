@@ -19,7 +19,8 @@ args = parser.parse_args()
 ultimo_estado = None
 mensaje_inicial_recibido = False
 
-
+minutos_esperar_arrancar=5
+minutos_esperar_apagar=2
 
 
 def show_alert(message):
@@ -29,8 +30,8 @@ def manejar_cambio_estado(nuevo_estado):
     print(f"Estado cambiado a: {nuevo_estado}")
 
     if (nuevo_estado=="on"):
-        show_alert("El sistema se apagará en 2 minutos. Guarda tu trabajo.")
-        time.sleep(120)
+        show_alert(f"El sistema se apagará en {minutos_esperar_apagar} minutos. Guarda tu trabajo.")
+        time.sleep(60*minutos_esperar_apagar)
         os.system("shutdown /s /t 0")        
 
 def on_connect(client, userdata, flags, rc):
@@ -61,6 +62,10 @@ def on_message(client, userdata, msg):
     elif nuevo_estado != ultimo_estado:
         manejar_cambio_estado(nuevo_estado)
         ultimo_estado = nuevo_estado
+
+
+#Esperar 5 minutos
+time.sleep(60*minutos_esperar_arrancar)
 
 # Cliente MQTT
 client = mqtt.Client()
